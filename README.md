@@ -9,8 +9,8 @@ you​ ​press​ ​a​ ​button.'''
 
 import machine; import time;
 
-led = machine.Pin(0, machine.Pin.OUT);
-button = machine.Pin(12, machine.Pin.IN, machine.Pin.PULL_UP)
+led = machine.Pin(12, machine.Pin.OUT);
+button = machine.Pin(13, machine.Pin.IN, machine.Pin.PULL_UP)
 
 while True:
     if button.value() == 0:
