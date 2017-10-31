@@ -12,12 +12,11 @@ import machine; import time;
 led = machine.Pin(0, machine.Pin.OUT);
 button = machine.Pin(12, machine.Pin.IN, machine.Pin.PULL_UP)
 
-def btnpres1():
-    while button.value() == 0:
+while True:
+    if button.value() == 0:
         led.on(); time.sleep(0.5); led.off(); time.sleep(0.5);
+    else: led.off();
     return
-
-time.sleep(0.2); btnpres1();
 
 '''2.​ ​Connect​ ​a​ ​button​ ​and​ ​all​ ​the​ ​three​ ​5mm​ ​colored​ ​LEDs​ ​(in​ ​this​ ​order:​ ​green,
 yellow​ ​and​ ​red)​ ​to​ ​the​ ​Feather​ ​Huzzah.​ ​​Remember​ ​that​ ​for​ ​each​ ​led​ ​you​ ​should
