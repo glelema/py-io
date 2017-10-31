@@ -9,14 +9,15 @@ you​ ​press​ ​a​ ​button.'''
 
 import machine; import time;
 
-led = machine.Pin(12, machine.Pin.OUT);
-button = machine.Pin(13, machine.Pin.IN, machine.Pin.PULL_UP)
+led = machine.Pin(13, machine.Pin.OUT);
+button = machine.Pin(14, machine.Pin.IN, machine.Pin.PULL_UP);
 
 while True:
-    if button.value() == 0:
-        led.on(); time.sleep(0.5); led.off(); time.sleep(0.5);
-    else: led.off();
-    return
+  if button.value() == 0:
+      led.on(); time.sleep(0.5); led.off(); time.sleep(0.5);
+  else: led.off();
+
+# test pass
 
 '''2.​ ​Connect​ ​a​ ​button​ ​and​ ​all​ ​the​ ​three​ ​5mm​ ​colored​ ​LEDs​ ​(in​ ​this​ ​order:​ ​green,
 yellow​ ​and​ ​red)​ ​to​ ​the​ ​Feather​ ​Huzzah.​ ​​Remember​ ​that​ ​for​ ​each​ ​led​ ​you​ ​should
@@ -28,27 +29,44 @@ lit.​ ​So​ ​on,​ ​after​ ​each​ ​button​ ​press,​ ​t
 
 import machine; import time;
 # assign 3 variables to 3 pins controlling 3 LEDs
-ledg = machine.Pin(0, machine.Pin.OUT); ledy = machine.Pin(16, machine.Pin.OUT);
-ledr = machine.Pin(2, machine.Pin.OUT); i=1;
+ledg = machine.Pin(15, machine.Pin.OUT); ledy = machine.Pin(16, machine.Pin.OUT);
+ledr = machine.Pin(13, machine.Pin.OUT); i=0;
+button = machine.Pin(14, machine.Pin.IN, machine.Pin.PULL_UP);
 
-def btnpres2():
-    while button.value() == 0:
-        if i%2 == 0: ledy.on(); i+=1;
-        elif i%3 == 0: ledr.on(); i+=1;
-        else: ledg.on(); i+=1;
-    return
+while True:
+  if button.value() == 0:
+    if i%2 == 0: ledy.on(); ledg.off(); ledr.off();
+    elif i%3 == 0: ledr.on(); ledg.off(); ledy.off();
+    else: ledg.on(); ledr.off(); ledy.off();
+    i+=1; time.sleep(2);
+  if i>3: i=0;
+  else: pass
 
-time.sleep(0.2); btnpres2();
+# testing fails, can't get what's off
 
 '''3. Temperature and 3 LEDs'''
 
+'''​Keep​ ​the​ ​green​ ​yellow​ ​and​ ​red​ ​LEDs​ ​connected​ ​to​ ​the​ ​Feather​ ​Huzzah.
+Connect​ ​also​ ​the​ ​​temperature​ ​sensor​ ​MCP9808​​ ​to​ ​the​ ​Feather​ ​Huzzah.​ ​Write​ ​a
+micropython​ ​program​ ​where​ ​only​ ​one​ ​of​ ​the​ ​LEDs​ ​is​ ​lit​ ​at​ ​a​ ​time​ ​depending​ ​on
+the​ ​temperature​ ​read​ ​from​ ​the​ ​temperature​ ​sensor.​ ​For​ ​example​ ​when​ ​the​ ​sensor
+is​ ​at​ ​the​ ​room​ ​temperature​ ​only​ ​the​ ​green​ ​LED​ ​is​ ​on.​ ​When​ ​you​ ​touch​ ​the
+temperature​ ​sensor,​ ​the​ ​temperature​ ​read​ ​from​ ​the​ ​sensor​ ​will​ ​start​ ​to​ ​rise​ ​and
+when​ ​it​ ​reaches​ ​a​ ​threshold​ ​value​ ​only​ ​the​ ​orange​ ​LED​ ​should​ ​be​ ​on.​ ​If​ ​you
+continue​ ​to​ ​keep​ ​the​ ​finger​ ​on​ ​the​ ​temperature​ ​sensor​ ​it​ ​will​ ​reach​ ​another​ ​higher
+threshold​ ​value​ ​and​ ​only​ ​the​ ​red​ ​LED​ ​will​ ​be​ ​on.​ ​If​ ​you​ ​stop​ ​touching​ ​the
+temperature​ ​sensor​ ​then​ ​the​ ​temperature​ ​will​ ​start​ ​falling​ ​and​ ​then​ ​only​ ​the
+orange​ ​or​ ​green​ ​LED​ ​will​ ​be​ ​on.​ ​You​ ​should​ ​find​ ​some​ ​suitable​ ​threshold​ ​values
+so​ ​that​ ​you​ ​can​ ​easily​ ​control​ ​which​ ​LED​ ​is​ ​turned​ ​on.​ ​For​ ​this​ ​exercise​ ​you​ ​can
+use​ ​​this​ ​tutorial​​ ​as​ ​a​ ​reference.'''
+
 import machine; import time;
 
-ledg = machine.Pin(0, machine.Pin.OUT); ledy = machine.Pin(16, machine.Pin.OUT);
-ledr = machine.Pin(2, machine.Pin.OUT);
+ledg = machine.Pin(15, machine.Pin.OUT); ledy = machine.Pin(16, machine.Pin.OUT);
+ledr = machine.Pin(13, machine.Pin.OUT);
 
 i2c = machine.I2C(scl=machine.Pin(5), sda=machine.Pin(4));
-data = bytearray(2); i2c.readfrom_mem_into(address, temp_reg, data);
+data = bytearray(2); # i2c.readfrom_mem_into(address, temp_reg, data);
 
 def temp_c(data): # temp reading function
     value = data[0] << 8 | data[1]
@@ -62,13 +80,15 @@ while True: # relevant LED on, rest off
     elif 22 <= temp_c(data) < 24: ledy.on(); ledg.off(); ledr.off(); time.sleep(0.2);
     else: ledr.on(); ledg.off(); ledy.off(); time.sleep(0.2);
 
+# test fail, defining function doesn't work
+
 '''4. Neopixel temperature. Way neopixel LED are designed is serial connection.
 So they can form strips, screens and other shapes. Then they are controlled
 by 1 pin in and 1 pin out.'''
 
 import machine, esp, time; # neopixel module won't import on this board
 
-pixel_pin   = machine.Pin(15, machine.Pin.OUT);  # Pin connected to the NeoPixels.
+pixel_pin = machine.Pin(15, machine.Pin.OUT);  # Pin connected to the NeoPixels.
 pixel_data = bytearray(3*3);
 
 # thermometer variable
