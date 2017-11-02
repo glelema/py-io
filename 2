@@ -1,0 +1,26 @@
+
+'''2.​ ​Connect​ ​a​ ​button​ ​and​ ​all​ ​the​ ​three​ ​5mm​ ​colored​ ​LEDs​ ​(in​ ​this​ ​order:​ ​green,
+yellow​ ​and​ ​red)​ ​to​ ​the​ ​Feather​ ​Huzzah.​ ​​Remember​ ​that​ ​for​ ​each​ ​led​ ​you​ ​should
+use​ ​a​ ​resistor​ ​as​ ​well.​​ ​Write​ ​a​ ​micropython​ ​program​ ​that​ ​each​ ​time​ ​you​ ​press​ ​the
+button​ ​will​ ​light​ ​up​ ​another​ ​LED.​ ​When​ ​the​ ​program​ ​first​ ​starts​ ​only​ ​the​ ​green
+LED​ ​is​ ​lit.​ ​After​ ​the​ ​first​ ​button​ ​press​ ​only​ ​the​ ​yellow​ ​LED​ ​is​ ​lit.​ ​After​ ​second
+button​ ​press​ ​only​ ​the​ ​RED​ ​led​ ​is​ ​lit.​ ​After​ ​the​ ​third​ ​button​ ​press​ ​the​ ​green​ ​LED​ ​is
+lit.​ ​So​ ​on,​ ​after​ ​each​ ​button​ ​press,​ ​the​ ​next​ ​LED​ ​will​ ​light​ ​up​ ​(in​ ​a​ ​cyclical​ ​fashion).'''
+
+import machine; import time;
+# assign 3 variables to 3 pins controlling 3 LEDs
+ledg = machine.Pin(15, machine.Pin.OUT); ledy = machine.Pin(16, machine.Pin.OUT);
+ledr = machine.Pin(13, machine.Pin.OUT); i=0;
+button = machine.Pin(14, machine.Pin.IN, machine.Pin.PULL_UP);
+
+while True:
+  if button.value() == 0:
+    if i == 0: ledy.on(); ledg.off(); ledr.off(); time.sleep(0.5);
+    elif i == 1: ledr.on(); ledg.off(); ledy.off(); time.sleep(0.5);
+    elif i == 2: ledg.on(); ledr.off(); ledy.off(); time.sleep(0.5);
+    else: pass
+    i+=1;
+  if i>3: i=0;
+  else: pass
+
+# works, but led changes every 0.5 seconds
