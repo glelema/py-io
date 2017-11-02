@@ -1,0 +1,34 @@
+
+'''4. Neopixel temperature. Way neopixel LED are designed is serial connection.
+So they can form strips, screens and other shapes. Then they are controlled
+by 1 pin in and 1 pin out.'''
+
+import machine, esp, time; # neopixel module won't import on this board
+
+pixel_pin = machine.Pin(15, machine.Pin.OUT);  # Pin connected to the NeoPixels.
+pixel_data = bytearray(3*3);
+
+# thermometer variable
+i2c = machine.I2C(scl=machine.Pin(5), sda=machine.Pin(4));
+data = bytearray(2); i2c.readfrom_mem_into(address, temp_reg, data);
+
+def temp_c(data): # temp reading function
+    value = data[0] << 8 | data[1]
+    temp = (value & 0xFFF) / 16.0
+    if value & 0x1000:
+        temp -= 256.0
+    return temp
+
+while True: # neopixel relevant LED on, rest off
+    if temp_c(data) < 22:
+        pixel_data = bytearray ([128,0,0,0,0,0,0,0,0]);
+        esp_neopixel.write(pixel_pin, pixel_data, True);
+        time.sleep(0.2);
+    elif 22 <= temp_c(data) < 24:
+        pixel_data = bytearray([0, 0, 0, 64, 64, 0, 0, 0, 0]);
+        esp_neopixel.write(pixel_pin, pixel_data, True);
+        time.sleep(0.2);
+    else:
+        pixel_data = bytearray([0, 0, 0, 0, 0, 0, 0, 128, 0]);
+        esp_neopixel.write(pixel_pin, pixel_data, True);
+        time.sleep(0.2);
