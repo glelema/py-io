@@ -1,0 +1,37 @@
+'''3. Temperature and 3 LEDs'''
+
+'''​Keep​ ​the​ ​green​ ​yellow​ ​and​ ​red​ ​LEDs​ ​connected​ ​to​ ​the​ ​Feather​ ​Huzzah.
+Connect​ ​also​ ​the​ ​​temperature​ ​sensor​ ​MCP9808​​ ​to​ ​the​ ​Feather​ ​Huzzah.​ ​Write​ ​a
+micropython​ ​program​ ​where​ ​only​ ​one​ ​of​ ​the​ ​LEDs​ ​is​ ​lit​ ​at​ ​a​ ​time​ ​depending​ ​on
+the​ ​temperature​ ​read​ ​from​ ​the​ ​temperature​ ​sensor.​ ​For​ ​example​ ​when​ ​the​ ​sensor
+is​ ​at​ ​the​ ​room​ ​temperature​ ​only​ ​the​ ​green​ ​LED​ ​is​ ​on.​ ​When​ ​you​ ​touch​ ​the
+temperature​ ​sensor,​ ​the​ ​temperature​ ​read​ ​from​ ​the​ ​sensor​ ​will​ ​start​ ​to​ ​rise​ ​and
+when​ ​it​ ​reaches​ ​a​ ​threshold​ ​value​ ​only​ ​the​ ​orange​ ​LED​ ​should​ ​be​ ​on.​ ​If​ ​you
+continue​ ​to​ ​keep​ ​the​ ​finger​ ​on​ ​the​ ​temperature​ ​sensor​ ​it​ ​will​ ​reach​ ​another​ ​higher
+threshold​ ​value​ ​and​ ​only​ ​the​ ​red​ ​LED​ ​will​ ​be​ ​on.​ ​If​ ​you​ ​stop​ ​touching​ ​the
+temperature​ ​sensor​ ​then​ ​the​ ​temperature​ ​will​ ​start​ ​falling​ ​and​ ​then​ ​only​ ​the
+orange​ ​or​ ​green​ ​LED​ ​will​ ​be​ ​on.​ ​You​ ​should​ ​find​ ​some​ ​suitable​ ​threshold​ ​values
+so​ ​that​ ​you​ ​can​ ​easily​ ​control​ ​which​ ​LED​ ​is​ ​turned​ ​on.​ ​For​ ​this​ ​exercise​ ​you​ ​can
+use​ ​​this​ ​tutorial​​ ​as​ ​a​ ​reference.'''
+
+import machine; import time;
+
+ledg = machine.Pin(15, machine.Pin.OUT); ledy = machine.Pin(16, machine.Pin.OUT);
+ledr = machine.Pin(13, machine.Pin.OUT);
+
+i2c = machine.I2C(scl=machine.Pin(5), sda=machine.Pin(4));
+data = bytearray(2); # i2c.readfrom_mem_into(address, temp_reg, data);
+
+def temp_c(data): # temp reading function
+    value = data[0] << 8 | data[1]
+    temp = (value & 0xFFF) / 16.0
+    if value & 0x1000:
+        temp -= 256.0
+    return temp
+
+while True: # relevant LED on, rest off
+    if temp_c(data) < 22: ledg.on(); ledy.off(); ledr.off(); time.sleep(0.2);
+    elif 22 <= temp_c(data) < 24: ledy.on(); ledg.off(); ledr.off(); time.sleep(0.2);
+    else: ledr.on(); ledg.off(); ledy.off(); time.sleep(0.2);
+
+# test fail, defining function doesn't work
