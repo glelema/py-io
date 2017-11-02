@@ -1,0 +1,36 @@
+'''5. Potentiometer / resistor, 3008 board'''
+
+'''​In​ ​this​ ​assignment​ ​we’ll​ ​connect​ ​an​ ​analog​ ​input​ ​to​ ​the​ ​Feather​ ​Huzzah​ ​with
+the​ ​help​ ​of​ ​the​ ​​MCP3008​ ​ADC​ ​conversion​ ​chip​.​ ​​ ​The​ ​analog​ ​input​ ​is​ ​provided​ ​by
+the​ ​potentiometer​ ​available​ ​in​ ​your​ ​kit.​ ​Write​ ​a​ ​micropython​ ​program​ ​that​ ​can
+control​ ​the​ ​intensity​ ​of​ ​light​ ​from​ ​a​ ​neopixel​ ​LED​ ​with​ ​the​ ​help​ ​of​ ​the
+potentiometer​ ​connected​ ​to​ ​channel​ ​3​ ​of​ ​the​ ​MCP3008​ ​chip.​ ​By​ ​turning​ ​the
+potentiometer​ ​you​ ​should​ ​be​ ​able​ ​to​ ​control​ ​the​ ​brightness​ ​of​ ​the​ ​LED​ ​from​ ​off​ ​to
+full​ ​brightness.​ ​For​ ​solving​ ​this​ ​assignment​ ​you’ll​ ​find​ ​these​ ​references​ ​to​ ​be
+useful:'''
+
+'''Dierct ADC is not here. ADC is done by 3008. 3008 outputs digital
+data to a pin on ESP8266.'''
+
+import machine; import time; import ubinascii; import esp;
+
+# assign 1 neopixel
+pixel_pin   = machine.Pin(15, machine.Pin.OUT);  # Pin connected to the NeoPixels.
+pixel_data = bytearray(3); # array of 3 = 1 neopixel led
+
+spi = machine.SPI(0, baudrate=1000000, polarity=0, phase=0);
+cs = machine.Pin(15, machine.Pin.OUT); cs.high();
+
+ubinascii.hexlify(data);
+
+cs.low(); data = spi.read(4); cs.high(); # channel 3 CH3 = spi.read(4)?
+data = bytearray(4); cs.low(); spi.readinto(data); cs.high();
+
+def temp_c(data):
+    temp = data[0] << 8 | data[1]
+    if temp & 0x0001:
+        return float('NaN')  # Fault reading data.
+    temp >>= 2
+    if temp & 0x2000:
+        temp -= 16384  # Sign bit set, take 2's compliment.
+    return temp * 0.25
