@@ -20,7 +20,9 @@ ledg = machine.Pin(15, machine.Pin.OUT); ledy = machine.Pin(16, machine.Pin.OUT)
 ledr = machine.Pin(13, machine.Pin.OUT);
 
 i2c = machine.I2C(scl=machine.Pin(5), sda=machine.Pin(4));
-data = bytearray(2); # i2c.readfrom_mem_into(address, temp_reg, data);
+address = 24; temp_reg = 5; res_reg = 8; # from datasheet
+data = i2c.readfrom_mem(address, temp_reg, 2); print(data);
+# data = bytearray(2);  i2c.readfrom_mem_into(address, temp_reg, data);
 
 def temp_c(data): # temp reading function
     value = data[0] << 8 | data[1]
@@ -29,9 +31,9 @@ def temp_c(data): # temp reading function
         temp -= 256.0
     return temp
 
-while True: # relevant LED on, rest off
+while True: # temperatures need to be adjusted here
     if temp_c(data) < 22: ledg.on(); ledy.off(); ledr.off(); time.sleep(0.2);
     elif 22 <= temp_c(data) < 24: ledy.on(); ledg.off(); ledr.off(); time.sleep(0.2);
     else: ledr.on(); ledg.off(); ledy.off(); time.sleep(0.2);
 
-# test fail, defining function doesn't work
+# might work, temperature doesn't change, stayed at 24.25
