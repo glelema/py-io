@@ -1,0 +1,20 @@
+
+'''ESP8266'''
+
+'''Each part runs independently. Code needs to be stopped by ctrl+c, because
+a lot of answers create an infinite loop.'''
+
+'''1. Make​ ​a​ ​red​ ​led​ ​blink​ ​with​ ​a​ ​frequency​ ​of​ ​1Hz​ ​(500ms​ ​on/500ms​ ​off)​ ​as​ ​long​ ​as
+you​ ​press​ ​a​ ​button.'''
+
+import machine; import time;
+
+led = machine.Pin(13, machine.Pin.OUT);
+button = machine.Pin(14, machine.Pin.IN, machine.Pin.PULL_UP);
+
+while True:
+  if button.value() == 0:
+      led.on(); time.sleep(0.5); led.off(); time.sleep(0.5);
+  else: led.off();
+
+# test pass
